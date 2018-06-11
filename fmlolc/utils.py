@@ -57,6 +57,9 @@ class SCPI(object):
             command (str): SCPI command. If it ends with '?',
                 this method automatically receives message.
 
+        Returns:
+            message (str): Received message if any.
+
         """
         # send command as bytes
         logger.info('SEND> {0}'.format(command))
@@ -77,6 +80,7 @@ class SCPI(object):
         if command.endswith('?'):
             recvdata = self.socket.recv(8192)
             logger.info('RECV> {0}'.format(recvdata))
+            return recvdata
 
     def __enter__(self):
         """Special method for with statement."""
