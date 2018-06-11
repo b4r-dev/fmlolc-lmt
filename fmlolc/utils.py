@@ -45,11 +45,10 @@ class SCPI(object):
 
         if self.protocol == 'TCP':
             self.socket = socket(AF_INET, SOCK_STREAM)
-            self.socket.connect(self.address)
         elif self.protocol == 'UDP':
             self.socket = socket(AF_INET, SOCK_DGRAM)
         else:
-            raise ValueError(protocol)
+            raise ValueError(self.protocol)
 
     def __call__(self, command):
         """Send SCPI command.
@@ -64,9 +63,15 @@ class SCPI(object):
         senddata = command + '\r\n'
 
         if self.protocol == 'TCP':
-            self.socket.send(senddata)
+            try:
+                self.socket.send(senddata)
+            except:
+                self.socket.connect(self.address)
+                self.socket.send(senddata)
         elif self.protocol == 'UDP':
             self.socket.sendto(senddata, self.address)
+        else:
+            raise ValueError(self.protocol)
 
         # receive message (if necessary)
         if command.endswith('?'):

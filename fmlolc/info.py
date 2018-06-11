@@ -16,9 +16,9 @@ logger = getLogger(__name__)
 
 
 # module constants
-INFO_SG    = {'host': '',
-              'port': '',
-              'protocol': 'TCP'}
+INFO_SG = {'host': '',
+           'port': '',
+           'protocol': 'TCP'}
 
 INFO_XFFTS = {'host': '',
               'port': '',
