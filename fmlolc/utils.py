@@ -5,7 +5,8 @@ from __future__ import division
 from __future__ import print_function
 
 # public items
-__all__ = ['SCPI']
+__all__ = ['SCPI',
+           'listfreq']
 
 # standard library
 from logging import getLogger
@@ -79,3 +80,23 @@ class SCPI(object):
     def __exit__(self, exc_type, exc_value, traceback):
         """Special method for with statement."""
         self.socket.close()
+
+
+# functions
+def listfreq(fmp_file, lo_freq, multiply=8):
+    """
+
+    Args:
+        fmp_file (str or path): Path of FM pattern file.
+        lo_freq (float): LO frequency at FM frequency = 0 in units of Hz.
+        multiply (int): Multiplication factor between SG to LO frequency.
+
+    Returns:
+        listfreq (str): String of series of SG frequencies in units of Hz.
+
+    """
+    path = str(Path(fmp_file).expanduser())
+    fm_freq = np.loadtxt(path, usecols=(1,))
+    sg_freq = (fm_freq + lo_freq) / multiply
+
+    return ' '.join('{0:.9E}'.format(f) for f in sg_freq)
