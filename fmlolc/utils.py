@@ -84,7 +84,7 @@ class SCPI(object):
 
 # functions
 def listfreq(fmp_file, lo_freq, multiply=8):
-    """
+    """Create frequency list for SCPI command.
 
     Args:
         fmp_file (str or path): Path of FM pattern file.
