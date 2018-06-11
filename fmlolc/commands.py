@@ -27,7 +27,7 @@ def initialize(fmp_file, lo_freq, multiply=8):
     Args:
         fmp_file (str or path): Path of FM pattern file.
         lo_freq (float): LO frequency at FM frequency = 0 in units of Hz.
-        multiply (int): Multiplication factor between SG to LO frequency.
+        multiply (int): Multiplication factor of SG-to-LO frequency.
 
     """
     listfreq = fmlolc.listfreq(fmp_file, lo_freq, multiply)
