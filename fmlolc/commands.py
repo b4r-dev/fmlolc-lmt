@@ -86,4 +86,6 @@ def finalize():
         xffts('XFFTS:CONFIG')
 
     with fmlolc.SCPI(**fmlolc.INFO_SG) as sg:
+        sg('*RST')
+        sg('*CLS')
         sg('FREQ:MODE CW')
