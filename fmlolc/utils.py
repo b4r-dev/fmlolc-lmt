@@ -13,6 +13,7 @@ from logging import getLogger
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM
 
 # dependent packages
+import numpy as np
 from pathlib2 import Path
 
 # module logger
