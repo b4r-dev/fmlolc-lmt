@@ -74,7 +74,7 @@ class SCPI(object):
         self.socket.settimeout(self.timeout)
 
         if self.protocol == 'TCP':
-            self.socket.recv(8192)
+            # self.socket.recv(8192)
             self.socket.send(senddata)
         elif self.protocol == 'UDP':
             self.socket.sendto(senddata, self.address)
