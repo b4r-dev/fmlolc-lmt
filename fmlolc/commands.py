@@ -85,3 +85,5 @@ def finalize():
 
     with fmlolc.SCPI(**fmlolc.INFO_SG) as sg:
         sg('FREQ:MODE CW')
+        sg('LIST:FREQ 1.75E+10')
+        sg('LIST:TRIG:SOUR IMM')
