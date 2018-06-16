@@ -69,7 +69,7 @@ class SCPI(object):
         """
         # send command as bytes
         logger.info('SEND> {0}'.format(command))
-        senddata = command + self.linebreak
+        senddata = str(command) + self.linebreak
 
         self.socket.settimeout(self.timeout)
 
