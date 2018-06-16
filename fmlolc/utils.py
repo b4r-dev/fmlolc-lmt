@@ -44,6 +44,7 @@ class SCPI(object):
         """
         self.address = (host, int(port))
         self.protocol = protocol
+        self.timeout = timeout
         self.linebreak = linebreak
 
         if self.protocol == 'TCP':
