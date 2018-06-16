@@ -39,8 +39,6 @@ def initialize(fmp_file, lo_freq, multiply=8):
         xffts('XFFTS:CONFIG')
 
     with fmlolc.SCPI(**fmlolc.INFO_SG) as sg:
-        sg('*RST')
-        sg('*CLS')
         sg('FREQ:MODE CW')
         sg('OUTP ON')
         sg('INIT:CONT OFF')
@@ -59,8 +57,6 @@ def start_fm():
         pass
 
     with fmlolc.SCPI(**fmlolc.INFO_SG) as sg:
-        sg('*RST')
-        sg('*CLS')
         sg('INIT:CONT ON')
 
 
@@ -86,6 +82,4 @@ def finalize():
         xffts('XFFTS:CONFIG')
 
     with fmlolc.SCPI(**fmlolc.INFO_SG) as sg:
-        sg('*RST')
-        sg('*CLS')
         sg('FREQ:MODE CW')
