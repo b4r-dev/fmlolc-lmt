@@ -44,10 +44,12 @@ def initialize(fmp_file, lo_freq, multiply=8):
         sg('INIT:CONT OFF')
         sg('LIST:TYPE LIST')
         sg('LIST:DWEL 2.0E-01')
-        sg('LIST:FREQ {0}'.format(listfreq))
         sg('LIST:TRIG:SOUR EXT')
         sg('FREQ:MODE LIST')
         sg('TRIG:SLOP POS')
+
+        # this must be the last
+        sg('LIST:FREQ {0}'.format(listfreq))
 
 
 def start_fm():
