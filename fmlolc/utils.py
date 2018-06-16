@@ -113,4 +113,4 @@ def listfreq(fmp_file, lo_freq, multiply=8):
     fm_freq = np.loadtxt(path, usecols=(1,))
     sg_freq = (fm_freq + 1e9*lo_freq) / multiply
 
-    return ' '.join('{0:.9E}'.format(f) for f in sg_freq)
+    return ','.join('{0:.9E}'.format(f) for f in sg_freq)
