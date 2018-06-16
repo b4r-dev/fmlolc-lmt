@@ -45,6 +45,7 @@ class SCPI(object):
 
         if self.protocol == 'TCP':
             self.socket = socket(AF_INET, SOCK_STREAM)
+            self.socket.connect(self.address)
         elif self.protocol == 'UDP':
             self.socket = socket(AF_INET, SOCK_DGRAM)
         else:
@@ -66,11 +67,8 @@ class SCPI(object):
         senddata = command + '\r\n'
 
         if self.protocol == 'TCP':
-            try:
-                self.socket.send(senddata)
-            except:
-                self.socket.connect(self.address)
-                self.socket.send(senddata)
+            self.socket.recv(8192)
+            self.socket.send(senddata)
         elif self.protocol == 'UDP':
             self.socket.sendto(senddata, self.address)
         else:
