@@ -21,13 +21,14 @@ logger = getLogger(__name__)
 
 # classes
 class SCPI(object):
-    def __init__(self, host, port, protocol, linebreak='\r\n'):
+    def __init__(self, host, port, protocol, timeout=3, linebreak='\r\n'):
         """Create SCPI interface for instrument.
 
         Args:
             host (str): IP address of instrument.
             port (int or str): Port number of instrument.
             protocol (str): Transport protocol. Must be either 'TCP' or 'UDP'.
+            timeout (str): Connection timeout in units of sec. Default is 3.
             linebreak (str): Line break string. Default is '\r\n' (CRLF).
 
         Example:
@@ -67,6 +68,8 @@ class SCPI(object):
         # send command as bytes
         logger.info('SEND> {0}'.format(command))
         senddata = command + self.linebreak
+
+        self.socket.settimeout(self.timeout)
 
         if self.protocol == 'TCP':
             self.socket.recv(8192)
