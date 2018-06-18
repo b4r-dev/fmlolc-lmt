@@ -9,6 +9,7 @@ __all__ = ['SCPI',
            'listfreq']
 
 # standard library
+import time
 from logging import getLogger
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM
 
@@ -61,6 +62,7 @@ class SCPI(object):
             self.socket = socket(AF_INET, SOCK_STREAM)
             self.socket.connect(self.address)
             if self.recvinit:
+                time.sleep(1.0)
                 self.socket.recv(self.recvsize)
         elif self.protocol == 'UDP':
             self.socket = socket(AF_INET, SOCK_DGRAM)
