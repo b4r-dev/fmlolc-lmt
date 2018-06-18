@@ -34,6 +34,8 @@ def initialize(fmp_file, lo_freq, lo_multiply=8, fm_rate=5.0):
     dt = 1.0 / float(fm_rate)
     listfreq = fmlolc.listfreq(fmp_file, lo_freq, lo_multiply)
 
+    finalize()
+
     with fmlolc.SCPI(**fmlolc.INFO_XFFTS) as xffts:
         xffts('XFFTS:CMDUSEDSECTIONS 1 1 1 1')
         xffts('XFFTS:CMDSYNCTIME {0:.3E}'.format(1e6*dt))
@@ -41,17 +43,12 @@ def initialize(fmp_file, lo_freq, lo_multiply=8, fm_rate=5.0):
         xffts('XFFTS:CONFIG')
 
     with fmlolc.SCPI(**fmlolc.INFO_SG) as sg:
-        sg('FREQ:MODE CW')
-        sg('OUTP ON')
-        sg('INIT:CONT OFF')
-        sg('LIST:TYPE LIST')
-        sg('LIST:DWEL {0:.3E}'.format(dt))
-        sg('LIST:TRIG:SOUR EXT')
         sg('FREQ:MODE LIST')
-        sg('TRIG:SLOP POS')
-
-        # this must be the last
+        sg('LIST:TYPE LIST')
+        sg('LIST:TRIG:SOUR EXT')
+        sg('LIST:DWEL {0:.3E}'.format(dt))
         sg('LIST:FREQ {0}'.format(listfreq))
+        sg('TRIG:SLOP POS')
 
 
 def start_fm():
