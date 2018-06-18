@@ -22,7 +22,8 @@ logger = getLogger(__name__)
 
 # classes
 class SCPI(object):
-    def __init__(self, host, port, protocol, timeout=3, linebreak='\r\n'):
+    def __init__(self, host, port, protocol, timeout=3, linebreak='\r\n',
+                 recvdata=True, recvinit=True, recvsize=8192):
         """Create SCPI interface for instrument.
 
         Args:
@@ -31,6 +32,11 @@ class SCPI(object):
             protocol (str): Transport protocol. Must be either 'TCP' or 'UDP'.
             timeout (str): Connection timeout in units of sec. Default is 3.
             linebreak (str): Line break string. Default is '\r\n' (CRLF).
+            recvdata (bool): Whether or not receive message after sending
+                SCPI command. Default is True.
+            recvinit (bool): Whether or not receive message when an instance
+                is created (only used if protocol=='TCP'). Default is True.
+            recvsize (int): Byte size for receiving message. Default is 8192.
 
         Example:
             >>> sg = SCPI('192.168.1.2', 8000, 'TCP')
@@ -43,14 +49,19 @@ class SCPI(object):
             RECV> 10
 
         """
-        self.address = (host, int(port))
-        self.protocol = protocol
-        self.timeout = timeout
+        self.address   = (host, int(port))
+        self.protocol  = protocol
+        self.timeout   = timeout
         self.linebreak = linebreak
+        self.recvdata  = recvdata
+        self.recvinit  = recvinit
+        self.recvsize  = recvsize
 
         if self.protocol == 'TCP':
             self.socket = socket(AF_INET, SOCK_STREAM)
             self.socket.connect(self.address)
+            if self.recvinit:
+                self.socket.recv(self.recvsize)
         elif self.protocol == 'UDP':
             self.socket = socket(AF_INET, SOCK_DGRAM)
         else:
@@ -74,16 +85,15 @@ class SCPI(object):
         self.socket.settimeout(self.timeout)
 
         if self.protocol == 'TCP':
-            # self.socket.recv(8192)
             self.socket.send(senddata)
         elif self.protocol == 'UDP':
             self.socket.sendto(senddata, self.address)
         else:
             raise ValueError(self.protocol)
 
-        # receive message (if necessary)
-        if command.endswith('?'):
-            recvdata = self.socket.recv(8192)
+        # receive message (optional)
+        if self.recvdata:
+            recvdata = self.socket.recv(self.recvsize)
             logger.info('RECV> {0}'.format(recvdata))
             return recvdata
 
