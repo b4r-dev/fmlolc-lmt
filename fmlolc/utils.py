@@ -84,7 +84,7 @@ class SCPI(object):
         else:
             raise ValueError(self.protocol)
 
-        recvdata = self.recv(self.buffersize)
+        recvdata = self.recv()
         logger.info('RECV> {0}'.format(recvdata))
         return recvdata
 
