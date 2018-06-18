@@ -11,7 +11,8 @@ __all__ = ['SCPI',
 # standard library
 import time
 from logging import getLogger
-from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM
+from socket import socket, timeout
+from socket import AF_INET, SOCK_DGRAM, SOCK_STREAM
 
 # dependent packages
 import numpy as np
@@ -23,19 +24,17 @@ logger = getLogger(__name__)
 
 # classes
 class SCPI(object):
-    def __init__(self, host, port, protocol, timeout=3,
-                 linebreak='\r\n', recvdata=True, recvsize=8192):
+    def __init__(self, host, port, protocol, timeout=0.1,
+                 buffersize=4096, linebreak='\r\n'):
         """Create SCPI interface for instrument.
 
         Args:
             host (str): IP address of instrument.
             port (int or str): Port number of instrument.
             protocol (str): Transport protocol. Must be either 'TCP' or 'UDP'.
-            timeout (str): Connection timeout in units of sec. Default is 3.
+            timeout (float): Connection timeout in units of sec. Default is 0.1.
+            buffersize (int): Byte size for receiving data. Default is 4096.
             linebreak (str): Line break string. Default is '\r\n' (CRLF).
-            recvdata (bool): Whether or not receive data after sending
-                SCPI command. Default is True.
-            recvsize (int): Byte size for receiving data. Default is 8192.
 
         Example:
             >>> sg = SCPI('192.168.1.2', 8000, 'TCP')
@@ -48,12 +47,11 @@ class SCPI(object):
             RECV> 10
 
         """
-        self.address   = (host, int(port))
-        self.protocol  = protocol
-        self.timeout   = timeout
-        self.linebreak = linebreak
-        self.recvdata  = recvdata
-        self.recvsize  = recvsize
+        self.address    = (host, int(port))
+        self.protocol   = protocol
+        self.timeout    = timeout
+        self.buffersize = buffersize
+        self.linebreak  = linebreak
 
         if self.protocol == 'TCP':
             self.socket = socket(AF_INET, SOCK_STREAM)
@@ -86,26 +84,19 @@ class SCPI(object):
         else:
             raise ValueError(self.protocol)
 
-        if self.recvdata:
-            recvdata = self.socket.recv(self.recvsize)
-            logger.info('RECV> {0}'.format(recvdata))
-            return recvdata
+        recvdata = self.recv(self.buffersize)
+        logger.info('RECV> {0}'.format(recvdata))
+        return recvdata
 
-    def recv(self, recvsize=None):
-        """Receive data manually.
+    def recv(self):
+        """Receive data until timeout exception is raised."""
+        recvdata = ''
 
-        Args:
-            recvsize (int): Byte size for receiving data.
-                If not spacified, `self.recvdata` will be used.
-
-        Returns:
-            recvdata (str): Received data.
-
-        """
-        if recvsize is None:
-            recvsize = self.recvsize
-
-        return self.socket.recv(recvsize)
+        while True:
+            try:
+                recvdata += self.socket.recv(self.buffersize)
+            except timeout:
+                return recvdata
 
     def __enter__(self):
         """Special method for with statement."""
